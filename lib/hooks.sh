@@ -76,9 +76,16 @@ run_hooks_in() {
 	cd "$directory" || return 1
 
 	run_hooks "$phase" "$@"
-	local result=$?
+	local hook_result=$?
 
-	cd "$old_pwd" || return 1
+	# Save hook result before attempting to cd back
+	# Attempt to cd back, but preserve the original hook result
+	if ! cd "$old_pwd" 2>/dev/null; then
+		log_error "Failed to return to original directory: $old_pwd"
+		# Return hook result even if cd back failed
+		# This ensures hook failures are not masked by directory navigation issues
+		return $hook_result
+	fi
 
-	return $result
+	return $hook_result
 }
