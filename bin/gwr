@@ -469,8 +469,8 @@ cmd_ai() {
 
 	# Check if AI tool is available before proceeding
 	if ! ai_can_start 2>/dev/null; then
-		log_error "$ai_tool is not available or not found in PATH"
-		log_info "Please install $ai_tool or check your configuration"
+		log_error "${ai_tool} is not available or not found in PATH"
+		log_info "Please install ${ai_tool} or check your configuration"
 		exit 1
 	fi
 

@@ -81,10 +81,10 @@ run_hooks_in() {
 	# Save hook result before attempting to cd back
 	# Attempt to cd back, but preserve the original hook result
 	if ! cd "$old_pwd" 2>/dev/null; then
-		log_error "Failed to return to original directory: $old_pwd"
+		log_error "Failed to return to original directory: ${old_pwd}"
 		# Return hook result even if cd back failed
 		# This ensures hook failures are not masked by directory navigation issues
-		return $hook_result
+		return "${hook_result}"
 	fi
 
 	return $hook_result
