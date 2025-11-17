@@ -61,7 +61,7 @@ copy_patterns() {
 			while IFS= read -r exclude_pattern; do
 				[ -z "$exclude_pattern" ] && continue
 				# Use glob matching instead of literal case matching
-				if [[ $file == $exclude_pattern ]]; then
+				if [[ "$file" == $exclude_pattern ]]; then
 					excluded=1
 					break
 				fi
