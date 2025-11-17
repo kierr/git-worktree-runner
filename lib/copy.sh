@@ -48,8 +48,9 @@ copy_patterns() {
 		local dst_root="$2"
 		local excludes="$3"
 		local preserve_paths="$4"
-		local -n counter_ref="$5" # Nameref to parent's copied_count
+		local current_count="$5" # Current count value (not a nameref)
 		local exclude_pattern
+		local new_count
 
 		# Remove leading ./
 		file="${file#./}"
@@ -89,10 +90,12 @@ EOF
 		# Copy the file
 		if cp "$file" "$dest_file" 2>/dev/null; then
 			log_info "Copied $file"
-			counter_ref=$((counter_ref + 1))
+			new_count=$((current_count + 1))
+			echo "$new_count"
 			return 0
 		else
 			log_warn "Failed to copy $file"
+			echo "$current_count"
 			return 1
 		fi
 	}
@@ -114,7 +117,9 @@ EOF
 			# Fallback to find for ** patterns on Bash 3.2
 			while IFS= read -r file; do
 				[ -z "$file" ] && continue
-				process_single_file "$file" "$dst_root" "$excludes" "$preserve_paths" "copied_count"
+				local result
+				result=$(process_single_file "$file" "$dst_root" "$excludes" "$preserve_paths" "$copied_count")
+				copied_count="$result"
 			done <<EOF
 $(find . -path "./$pattern" -type f 2>/dev/null)
 EOF
@@ -123,7 +128,9 @@ EOF
 			for file in $pattern; do
 				# Skip if not a file
 				[ -f "$file" ] || continue
-				process_single_file "$file" "$dst_root" "$excludes" "$preserve_paths" "copied_count"
+				local result
+				result=$(process_single_file "$file" "$dst_root" "$excludes" "$preserve_paths" "$copied_count")
+				copied_count="$result"
 			done
 		fi
 	done <<EOF
