@@ -1,6 +1,30 @@
 #!/usr/bin/env bash
 # Core git worktree operations
 
+# Escape special regex characters in a string
+# Usage: escape_regex "string"
+escape_regex() {
+	local string="$1"
+	# Escape regex metacharacters: . * + ? [ ] ( ) { } ^ $ |
+	# Use sed to escape each character with a backslash
+	# Note: escaping / is not necessary for our use case
+	string="${string//./\\.}"
+	string="${string//\*/\\*}"
+	string="${string//+/\\+}"
+	string="${string//\?/\\?}"
+	string="${string//\[/\\[}"
+	string="${string//\]/\\]}"
+	string="${string//\(/\\(}"
+	string="${string//)/\\)}"
+	string="${string//\{/\\{"
+	string="${string//\}/\\}}"
+	string="${string//^/\\^}"
+	string="${string//\$/\\$}"
+	string="${string//|/\\|}"
+	string="${string//&/\\&}"
+	printf "%s" "$string"
+}
+
 # Discover the root of the current git repository
 # Returns: absolute path to repo root
 # Exit code: 0 on success, 1 if not in a git repo
@@ -60,9 +84,11 @@ resolve_base_dir() {
 	# Warn if worktree dir is inside repo (but not a sibling)
 	if [[ $base_dir == "$repo_root"/* ]]; then
 		local rel_path="${base_dir#$repo_root/}"
+		local escaped_rel_path
+		escaped_rel_path=$(escape_regex "$rel_path")
 		# Check if .gitignore exists and whether it includes the worktree directory
 		if [ -f "$repo_root/.gitignore" ]; then
-			if ! grep -qE "^/?${rel_path}/?\$|^/?${rel_path}/\*?\$" "$repo_root/.gitignore" 2>/dev/null; then
+			if ! grep -qE "^/?${escaped_rel_path}/?\$|^/?${escaped_rel_path}/\*?\$" "$repo_root/.gitignore" 2>/dev/null; then
 				log_warn "Worktrees are inside repository at: $rel_path"
 				log_warn "Consider adding '/$rel_path/' to .gitignore to avoid committing worktrees"
 			fi
@@ -91,7 +117,7 @@ resolve_default_branch() {
 	fi
 
 	# Auto-detect from origin/HEAD
-	default_branch=$(git symbolic-ref --quiet refs/remotes/origin/HEAD 2>/dev/null | sed 's|refs/remotes/origin/||')
+	default_branch=$(git -C "$repo_root" symbolic-ref --quiet refs/remotes/origin/HEAD 2>/dev/null | sed 's|refs/remotes/origin/||')
 
 	if [ -n "$default_branch" ]; then
 		printf "%s" "$default_branch"
@@ -99,9 +125,9 @@ resolve_default_branch() {
 	fi
 
 	# Fallback: try common branch names
-	if git show-ref --verify --quiet "refs/remotes/origin/main"; then
+	if git -C "$repo_root" show-ref --verify --quiet "refs/remotes/origin/main"; then
 		printf "main"
-	elif git show-ref --verify --quiet "refs/remotes/origin/master"; then
+	elif git -C "$repo_root" show-ref --verify --quiet "refs/remotes/origin/master"; then
 		printf "master"
 	else
 		# Last resort: just use 'main'
@@ -258,6 +284,18 @@ create_worktree() {
 	local custom_name="${8-}"
 	local sanitized_name worktree_path
 
+	# Validate track_mode parameter
+	case "$track_mode" in
+	auto | remote | local | none)
+		# Valid value, continue
+		;;
+	*)
+		log_error "Invalid track_mode: $track_mode"
+		log_error "Valid values are: auto, remote, local, none"
+		return 1
+		;;
+	esac
+
 	# Construct folder name
 	if [ -n "$custom_name" ]; then
 		sanitized_name="$(sanitize_branch_name "$branch_name")-${custom_name}"
@@ -338,7 +376,7 @@ create_worktree() {
 		fi
 		;;
 
-	auto | *)
+	auto)
 		# Auto-detect best option with proper tracking
 		if [ "$remote_exists" -eq 1 ] && [ "$local_exists" -eq 0 ]; then
 			# Remote exists, no local branch - create local with tracking
