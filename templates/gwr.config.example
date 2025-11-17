@@ -1,0 +1,77 @@
+# Example gwr configuration
+# Copy this to your repository and customize as needed
+
+# === Worktree Settings ===
+
+# Base directory for worktrees
+# Default: <repo-name>-worktrees (sibling directory)
+#
+# Relative paths are resolved from repository root
+# Absolute paths are used as-is
+# Tilde (~) expands to home directory
+#
+# Examples:
+# gwr.worktrees.dir = .worktrees              # Inside repo (add to .gitignore!)
+# gwr.worktrees.dir = ~/worktrees/my-project  # In home directory
+# gwr.worktrees.dir = /tmp/worktrees          # Absolute path
+#
+# gwr.worktrees.dir = my-worktrees
+
+# Prefix for worktree directory names (folders named: {prefix}{branch-name})
+# Default: "" (empty, folders named after branch)
+# gwr.worktrees.prefix = dev-
+
+# Default branch to create new branches from
+# Options: auto (detect from origin/HEAD), main, master, or any branch name
+# Default: auto
+# gwr.defaultBranch = main
+
+# === Editor Settings ===
+
+# Default editor to open worktrees
+# Options: cursor, vscode, zed, or none
+# Default: none
+# gwr.editor.default = cursor
+
+# === AI Tool Settings ===
+
+# Default AI coding tool
+# Options: aider, or none
+# Default: none
+# gwr.ai.default = aider
+
+# === File Copying ===
+
+# Files to copy to new worktrees (glob patterns, can specify multiple)
+# Default: none
+# gwr.copy.include = **/.env.example
+# gwr.copy.include = **/CLAUDE.md
+# gwr.copy.include = apps/*/run.sh
+
+# Files to exclude from copying (glob patterns)
+# gwr.copy.exclude = **/.env
+# gwr.copy.exclude = **/.env.local
+# gwr.copy.exclude = **/secrets.json
+
+# === Hooks ===
+
+# Commands to run after creating a worktree (can specify multiple, run in order)
+# gwr.hook.postCreate = npm install
+# gwr.hook.postCreate = npm run build
+
+# Commands to run after removing a worktree
+# gwr.hook.postRemove = echo "Cleaned up worktree"
+
+# === How to Apply This Config ===
+
+# For local repository only:
+# git config --local gwr.editor.default cursor
+# git config --local --add gwr.copy.include "**/.env.example"
+# git config --local --add gwr.hook.postCreate "pnpm install"
+
+# For all repositories (global):
+# git config --global gwr.editor.default vscode
+
+# Or use gwr's config command:
+# gwr config set gwr.editor.default cursor
+# gwr config set gwr.editor.default cursor --global
