@@ -1,27 +1,27 @@
 ---
-applyTo: completions/gtr.bash, completions/_gtr, completions/gtr.fish
+applyTo: completions/gwr.bash, completions/_gwr, completions/gwr.fish
 ---
 
 # Completions Instructions
 
 ## Overview
 
-Shell completions provide tab-completion for `gtr` commands, flags, branches, and adapter names across Bash, Zsh, and Fish shells.
+Shell completions provide tab-completion for `gwr` commands, flags, branches, and adapter names across Bash, Zsh, and Fish shells.
 
 ## When to Update Completions
 
 **Always update all three completion files** when:
 
-- Adding new commands (e.g., `gtr new-command`)
+- Adding new commands (e.g., `gwr new-command`)
 - Adding new flags to existing commands (e.g., `--new-flag`)
 - Adding editor or AI adapters (completion must list available adapters)
 - Changing command names or flag names
 
 ## File Responsibilities
 
-- **`completions/gtr.bash`** - Bash completion (requires bash-completion v2+)
-- **`completions/_gtr`** - Zsh completion (uses Zsh completion system)
-- **`completions/gtr.fish`** - Fish shell completion
+- **`completions/gwr.bash`** - Bash completion (requires bash-completion v2+)
+- **`completions/_gwr`** - Zsh completion (uses Zsh completion system)
+- **`completions/gwr.fish`** - Fish shell completion
 
 ## Implementation Pattern
 
@@ -29,7 +29,7 @@ Each completion file implements:
 
 1. **Command completion** - Top-level commands (`new`, `rm`, `open`, `ai`, `list`, etc.)
 2. **Flag completion** - Command-specific flags (e.g., `--from`, `--force`, `--editor`)
-3. **Branch completion** - Dynamic completion of existing worktree branches (via `gtr list --porcelain`)
+3. **Branch completion** - Dynamic completion of existing worktree branches (via `gwr list --porcelain`)
 4. **Adapter completion** - Editor names (`cursor`, `vscode`, `zed`) and AI tool names (`aider`, `claude`, `codex`)
 
 ## Testing Completions
@@ -38,27 +38,27 @@ Each completion file implements:
 
 ```bash
 # Bash - source the completion file
-source completions/gtr.bash
-gtr <TAB>                    # Should show commands
-gtr new <TAB>                # Should show flags
-gtr open <TAB>               # Should show branches
-gtr open --editor <TAB>      # Should show editor names
+source completions/gwr.bash
+gwr <TAB>                    # Should show commands
+gwr new <TAB>                # Should show flags
+gwr open <TAB>               # Should show branches
+gwr open --editor <TAB>      # Should show editor names
 
 # Zsh - fpath must include completions directory
 fpath=(completions $fpath)
 autoload -U compinit && compinit
-gtr <TAB>
+gwr <TAB>
 
 # Fish - symlink to ~/.config/fish/completions/
-ln -s "$(pwd)/completions/gtr.fish" ~/.config/fish/completions/
-gtr <TAB>
+ln -s "$(pwd)/completions/gwr.fish" ~/.config/fish/completions/
+gwr <TAB>
 ```
 
 ## Branch Completion Logic
 
 All three completions dynamically fetch current worktree branches:
 
-- Parse output of `gtr list --porcelain` (tab-separated: `path\tbranch\tstatus`)
+- Parse output of `gwr list --porcelain` (tab-separated: `path\tbranch\tstatus`)
 - Extract branch column (second field)
 - Exclude the special ID `1` (main repo) if needed
 
@@ -66,20 +66,20 @@ All three completions dynamically fetch current worktree branches:
 
 When adding an editor or AI adapter:
 
-**Bash** (`completions/gtr.bash`):
+**Bash** (`completions/gwr.bash`):
 
-- Update `_gtr_editors` array or case statement
+- Update `_gwr_editors` array or case statement
 - Update flag completion for `--editor` in `open` command
 
-**Zsh** (`completions/_gtr`):
+**Zsh** (`completions/_gwr`):
 
 - Update `_arguments` completion specs for `--editor` or `--ai`
 - Use `_values` or `_alternative` for adapter names
 
-**Fish** (`completions/gtr.fish`):
+**Fish** (`completions/gwr.fish`):
 
-- Update `complete -c gtr` lines for editor/AI flags
-- List adapter names explicitly or parse from `gtr adapter` output
+- Update `complete -c gwr` lines for editor/AI flags
+- List adapter names explicitly or parse from `gwr adapter` output
 
 ## Keep in Sync
 
@@ -92,7 +92,7 @@ The three completion files must stay synchronized:
 
 ## Examples
 
-**Adding a new command `gtr status`**:
+**Adding a new command `gwr status`**:
 
 1. Add `status` to main command list in all three files
 2. Add flag completion if the command has flags
@@ -102,9 +102,9 @@ The three completion files must stay synchronized:
 
 1. Create `adapters/editor/sublime.sh` with contract functions
 2. Add `sublime` to editor list in all three completion files
-3. Update help text in `bin/gtr` (`cmd_help` function)
+3. Update help text in `bin/gwr` (`cmd_help` function)
 4. Update README with installation instructions
-5. Test `gtr open --editor s<TAB>` completes to `sublime`
+5. Test `gwr open --editor s<TAB>` completes to `sublime`
 
 ## Common Pitfalls
 
@@ -128,6 +128,6 @@ The three completion files must stay synchronized:
 
 ## Fish-Specific Notes
 
-- Uses declarative `complete -c gtr` syntax
+- Uses declarative `complete -c gwr` syntax
 - Conditions can check previous arguments with `__fish_seen_subcommand_from`
 - Can call external commands for dynamic completion

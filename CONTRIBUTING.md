@@ -1,6 +1,6 @@
-# Contributing to gtr
+# Contributing to gwr
 
-Thank you for considering contributing to `gtr`! This document provides guidelines and instructions for contributing.
+Thank you for considering contributing to `gwr`! This document provides guidelines and instructions for contributing.
 
 ## How to Contribute
 
@@ -32,7 +32,7 @@ We welcome feature suggestions! Please:
 
 ```
 git-worktree-runner/
-├── bin/gtr              # Main executable dispatcher
+├── bin/gwr              # Main executable dispatcher
 ├── lib/                 # Core functionality
 │   ├── core.sh         # Git worktree operations
 │   ├── config.sh       # Configuration (git-config wrapper)
@@ -178,8 +178,8 @@ Currently, testing is manual. Please test your changes on:
 - [ ] List worktrees
 - [ ] Test configuration commands
 - [ ] Test completions (tab completion works)
-- [ ] Test `gtr go 1` for main repo
-- [ ] Test `gtr go <branch>` for worktrees
+- [ ] Test `gwr go 1` for main repo
+- [ ] Test `gwr go <branch>` for worktrees
 
 ### Pull Request Process
 

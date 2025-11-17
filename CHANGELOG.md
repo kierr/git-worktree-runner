@@ -22,7 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 
 ### Added
 
-- Initial release of `gtr` (Git Worktree Runner)
+- Initial release of `gwr` (Git Worktree Runner)
 - Core commands: `new`, `rm`, `go`, `open`, `ai`, `list`, `clean`, `doctor`, `config`, `adapter`, `help`, `version`
 - Worktree creation with branch sanitization, remote/local/auto tracking, and `--force --name` multi-worktree support
 - Base directory resolution with support for `.` (repo root) and `./path` (inside repo) plus legacy sibling behavior
@@ -35,7 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com), and this 
 - Diagnostic commands: `doctor` (environment check) and `adapter` (adapter availability)
 - Debian packaging assets (`build-deb.sh`, `Makefile`, `debian/` directory)
 - Contributor & AI assistant guidance: `.github/instructions/*.instructions.md`, `.github/copilot-instructions.md`, `CLAUDE.md`
-- Support for storing worktrees inside the repository via `gtr.worktrees.dir=./<path>`
+- Support for storing worktrees inside the repository via `gwr.worktrees.dir=./<path>`
 
 ### Changed
 
