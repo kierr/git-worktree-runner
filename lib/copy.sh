@@ -60,12 +60,11 @@ copy_patterns() {
 		if [ -n "$excludes" ]; then
 			while IFS= read -r exclude_pattern; do
 				[ -z "$exclude_pattern" ] && continue
-				case "$file" in
-				"$exclude_pattern")
+				# Use glob matching instead of literal case matching
+				if [[ $file == $exclude_pattern ]]; then
 					excluded=1
 					break
-					;;
-				esac
+				fi
 			done <<EOF
 $excludes
 EOF
@@ -140,7 +139,10 @@ EOF
 	# Restore previous shell options
 	eval "$shopt_save" 2>/dev/null || true
 
-	cd "$old_pwd" || return 1
+	if ! cd "$old_pwd"; then
+		log_error "Failed to return to directory: $old_pwd"
+		return 1
+	fi
 
 	if [ "$copied_count" -gt 0 ]; then
 		log_info "Copied $copied_count file(s)"
