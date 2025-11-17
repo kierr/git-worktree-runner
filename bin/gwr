@@ -467,6 +467,13 @@ cmd_ai() {
 	# Load AI adapter
 	load_ai_adapter "$ai_tool"
 
+	# Check if AI tool is available before proceeding
+	if ! ai_can_start 2>/dev/null; then
+		log_error "$ai_tool is not available or not found in PATH"
+		log_info "Please install $ai_tool or check your configuration"
+		exit 1
+	fi
+
 	local repo_root base_dir prefix
 	repo_root=$(discover_repo_root) || exit 1
 	base_dir=$(resolve_base_dir "$repo_root")
@@ -514,7 +521,9 @@ cmd_list() {
 		# Try --show-current (Git 2.22+), fallback to rev-parse for older Git
 		branch=$(git -C "$repo_root" branch --show-current 2>/dev/null)
 		[ -z "$branch" ] && branch=$(git -C "$repo_root" rev-parse --abbrev-ref HEAD 2>/dev/null)
-		[ -z "$branch" ] || [ "$branch" = "HEAD" ] && branch="(detached)"
+		if [ -z "$branch" ] || [ "$branch" = "HEAD" ]; then
+			branch="(detached)"
+		fi
 		status=$(worktree_status "$repo_root")
 		printf "%s\t%s\t%s\n" "$repo_root" "$branch" "$status"
 
@@ -542,7 +551,9 @@ cmd_list() {
 	# Try --show-current (Git 2.22+), fallback to rev-parse for older Git
 	branch=$(git -C "$repo_root" branch --show-current 2>/dev/null)
 	[ -z "$branch" ] && branch=$(git -C "$repo_root" rev-parse --abbrev-ref HEAD 2>/dev/null)
-	[ -z "$branch" ] || [ "$branch" = "HEAD" ] && branch="(detached)"
+	if [ -z "$branch" ] || [ "$branch" = "HEAD" ]; then
+		branch="(detached)"
+	fi
 	printf "%-30s %s\n" "$branch [main repo]" "$repo_root"
 
 	# Show worktrees sorted by branch name
