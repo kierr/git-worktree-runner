@@ -61,7 +61,7 @@ copy_patterns() {
 			while IFS= read -r exclude_pattern; do
 				[ -z "$exclude_pattern" ] && continue
 				# Use glob matching instead of literal case matching
-				if [[ "$file" == $exclude_pattern ]]; then
+				if [[ $file == $exclude_pattern ]]; then
 					excluded=1
 					break
 				fi
@@ -71,7 +71,10 @@ EOF
 		fi
 
 		# Skip if excluded
-		[ "$excluded" -eq 1 ] && { echo "$current_count"; return 1; }
+		[ "$excluded" -eq 1 ] && {
+			echo "$current_count"
+			return 1
+		}
 
 		# Determine destination path
 		local dest_file

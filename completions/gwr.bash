@@ -33,14 +33,14 @@ _gwr_completion() {
 	new)
 		# Complete flags
 		if [[ $cur == -* ]]; then
-			COMPREPLY=($(compgen -W "--id --from --track --no-copy --no-fetch --force --name --yes" -- "$cur"))
+			COMPREPLY=($(compgen -W "--from --track --no-copy --no-fetch --force --name --yes" -- "$cur"))
 		elif [ "$prev" = "--track" ]; then
 			COMPREPLY=($(compgen -W "auto remote local none" -- "$cur"))
 		fi
 		;;
 	config)
 		if [ "$cword" -eq 2 ]; then
-			COMPREPLY=($(compgen -W "get set unset" -- "$cur"))
+			COMPREPLY=($(compgen -W "get set add unset" -- "$cur"))
 		elif [ "$cword" -eq 3 ]; then
 			COMPREPLY=($(compgen -W "gwr.worktrees.dir gwr.worktrees.prefix gwr.defaultBranch gwr.editor.default gwr.ai.default gwr.copy.include gwr.copy.exclude gwr.hook.postCreate gwr.hook.postRemove" -- "$cur"))
 		fi
