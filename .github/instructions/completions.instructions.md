@@ -27,7 +27,7 @@ Shell completions provide tab-completion for `gwr` commands, flags, branches, an
 
 Each completion file implements:
 
-1. **Command completion** - Top-level commands (`new`, `rm`, `open`, `ai`, `list`, etc.)
+1. **Command completion** - Top-level commands (`new`, `rm`, `go`, `ai`, `list`, etc.)
 2. **Flag completion** - Command-specific flags (e.g., `--from`, `--force`, `--editor`)
 3. **Branch completion** - Dynamic completion of existing worktree branches (via `gwr list --porcelain`)
 4. **Adapter completion** - Editor names (`cursor`, `vscode`, `zed`) and AI tool names (`aider`, `claude`, `codex`)
@@ -58,9 +58,13 @@ gwr <TAB>
 
 All three completions dynamically fetch current worktree branches:
 
-- Parse output of `gwr list --porcelain` (tab-separated: `path\tbranch\tstatus`)
-- Extract branch column (second field)
-- Exclude the special ID `1` (main repo) if needed
+- Parse output of `gwr list --porcelain` (tab-separated format: `path\tbranch\tstatus`)
+- Extract branch column (second field: `cut -f2`)
+- Add special ID `1` for main repository
+- Sort and deduplicate branches (`sort -u`)
+- Filter out empty lines (`grep -v '^$'`)
+
+**Note**: This ensures completions only show branches that have actual worktrees, not all branches in the repository.
 
 ## Adapter Name Updates
 

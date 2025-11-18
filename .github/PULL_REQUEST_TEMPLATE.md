@@ -35,13 +35,13 @@ Fixes # (issue)
 
 **Core functionality tested:**
 
-- [ ] `git gtr new <branch>` - Create worktree
-- [ ] `git gtr go <branch>` - Navigate to worktree
-- [ ] `git gtr editor <branch>` - Open in editor (if applicable)
-- [ ] `git gtr ai <branch>` - Start AI tool (if applicable)
-- [ ] `git gtr rm <branch>` - Remove worktree
-- [ ] `git gtr list` - List worktrees
-- [ ] `git gtr config` - Configuration commands (if applicable)
+- [ ] `git gwr new <branch>` - Create worktree
+- [ ] `git gwr go <branch>` - Navigate to worktree
+- [ ] `git gwr editor <branch>` - Open in editor (if applicable)
+- [ ] `git gwr ai <branch>` - Start AI tool (if applicable)
+- [ ] `git gwr rm <branch>` - Remove worktree
+- [ ] `git gwr list` - List worktrees
+- [ ] `git gwr config` - Configuration commands (if applicable)
 - [ ] Other commands affected by this change: **\*\***\_\_**\*\***
 
 ### Test Steps
@@ -77,7 +77,7 @@ Before submitting this PR, please check:
 - [ ] I have updated documentation (README.md, CLAUDE.md, etc.) if needed
 - [ ] My changes work on multiple platforms (or I've noted platform-specific behavior)
 - [ ] I have added/updated shell completions (if adding new commands or flags)
-- [ ] I have tested with both `git gtr` (production) and `./bin/gtr` (development)
+- [ ] I have tested with both `git gwr` (production) and `./bin/gwr` (development)
 - [ ] No new external dependencies are introduced (Bash + git only)
 - [ ] All existing functionality still works
 
