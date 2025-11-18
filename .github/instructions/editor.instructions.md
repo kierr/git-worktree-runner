@@ -29,8 +29,8 @@ editor_open() {
 **Also update**:
 
 - README.md (setup instructions)
-- All three completion files: `completions/gtr.bash`, `completions/_git-gtr`, `completions/gtr.fish`
-- Help text in `bin/gtr` (`cmd_help` function)
+- All three completion files: `completions/gwr.bash`, `completions/_gwr`, `completions/gwr.fish`
+- Help text in `bin/gwr` (`cmd_help` function)
 
 ## Contract & Guidelines
 

@@ -1,10 +1,7 @@
-#compdef git-gtr
-# Zsh completion for git gtr
+#compdef gwr
+# Zsh completion for gwr
 
-_git_gtr() {
-  # Note: When called via 'git gtr', the words array is [git-gtr, <command>, ...]
-  # Git's completion system invokes this function automatically
-
+_gwr() {
   local -a commands
   commands=(
     'new:Create a new worktree'
@@ -23,12 +20,12 @@ _git_gtr() {
   )
 
   local -a branches all_options
-  # Get branch names
-  branches=(${(f)"$(git branch --format='%(refname:short)' 2>/dev/null)"})
+  # Get branch names from existing worktrees using gwr list --porcelain
+  branches=(${(f)"$(gwr list --porcelain 2>/dev/null | cut -f2 | grep -v '^$' | sort -u)"})
   # Add special ID '1' for main repo
   all_options=("1" "${branches[@]}")
 
-  # Complete the gtr subcommand (new, go, editor, etc.)
+  # Complete the gwr subcommand (new, go, editor, etc.)
   if (( CURRENT == 2 )); then
     _describe 'commands' commands
   # Complete arguments to the subcommand
@@ -64,15 +61,15 @@ _git_gtr() {
         case "$words[3]" in
           get|set|add|unset)
             _values 'config key' \
-              'gtr.worktrees.dir' \
-              'gtr.worktrees.prefix' \
-              'gtr.defaultBranch' \
-              'gtr.editor.default' \
-              'gtr.ai.default' \
-              'gtr.copy.include' \
-              'gtr.copy.exclude' \
-              'gtr.hook.postCreate' \
-              'gtr.hook.postRemove'
+              'gwr.worktrees.dir' \
+              'gwr.worktrees.prefix' \
+              'gwr.defaultBranch' \
+              'gwr.editor.default' \
+              'gwr.ai.default' \
+              'gwr.copy.include' \
+              'gwr.copy.exclude' \
+              'gwr.hook.postCreate' \
+              'gwr.hook.postRemove'
             ;;
         esac
         ;;
@@ -80,4 +77,4 @@ _git_gtr() {
   fi
 }
 
-# Function is auto-discovered by git's completion system - do not call it here
+_gwr "$@"

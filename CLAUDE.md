@@ -4,20 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-`git gtr` (Git Worktree Runner) is a cross-platform CLI tool written in Bash that simplifies git worktree management. It wraps `git worktree` with quality-of-life features like editor integration, AI tool support, file copying, and hooks. It is installed as a git subcommand, so all commands are invoked as `git gtr <command>`.
-
-## Important: v2.0.0 Command Structure
-
-**As of v2.0.0**, the tool is invoked as `git gtr` (git subcommand) to avoid conflicts with GNU coreutils:
-
-- **Production use**: `git gtr <command>` (git subcommand)
-- **Development/testing**: `./bin/gtr <command>` (direct script execution)
-
-**Binary structure**:
-- `bin/git-gtr`: Thin wrapper (16 lines) that allows git subcommand invocation (`git gtr`)
-- `bin/gtr`: Main script containing all logic (900+ lines)
-
-When testing changes locally, you use `./bin/gtr` directly. When documenting user-facing features or writing help text, always reference `git gtr`.
+`gwr` (Git Worktree Runner) is a cross-platform CLI tool written in Bash that simplifies git worktree management. It wraps `git worktree` with quality-of-life features like editor integration, AI tool support, file copying, and hooks.
 
 ## Development Commands
 
@@ -26,15 +13,15 @@ When testing changes locally, you use `./bin/gtr` directly. When documenting use
 Since this is a Bash script project without a traditional build system, test changes by running the script directly:
 
 ```bash
-# Run gtr from the repo (no installation needed)
-./bin/gtr <command>
+# Run gwr from the repo (no installation needed)
+./bin/gwr <command>
 
 # Or use the full path
-/path/to/git-worktree-runner/bin/gtr <command>
+/path/to/git-worktree-runner/bin/gwr <command>
 
 # Test in a different git repository
 cd ~/some-test-repo
-/path/to/git-worktree-runner/bin/gtr new test-branch
+/path/to/git-worktree-runner/bin/gwr new test-branch
 ```
 
 ### CRITICAL: No Automated Tests
@@ -52,80 +39,80 @@ Test changes using this comprehensive checklist (from CONTRIBUTING.md):
 
 ```bash
 # Create worktree with simple branch name
-./bin/gtr new test-feature
+./bin/gwr new test-feature
 # Expected: Creates folder "test-feature"
 
 # Create worktree with branch containing slashes
-./bin/gtr new feature/auth
+./bin/gwr new feature/auth
 # Expected: Creates folder "feature-auth" (sanitized)
 
 # Create worktree from remote branch (if exists)
-./bin/gtr new existing-remote-branch
+./bin/gwr new existing-remote-branch
 # Expected: Checks out remote tracking branch
 
 # Create worktree from local branch (if exists)
-./bin/gtr new existing-local-branch
+./bin/gwr new existing-local-branch
 # Expected: Creates worktree from local branch
 
 # Create worktree with new branch
-./bin/gtr new brand-new-feature
+./bin/gwr new brand-new-feature
 # Expected: Creates new branch and worktree
 
 # Test --force and --name flags together
-./bin/gtr new test-feature --force --name backend
+./bin/gwr new test-feature --force --name backend
 # Expected: Creates folder "test-feature-backend" on same branch
 
 # Open in editor (if testing adapters)
-./bin/gtr config set gtr.editor.default cursor
-./bin/gtr editor test-feature
+./bin/gwr config set gwr.editor.default cursor
+./bin/gwr editor test-feature
 # Expected: Opens Cursor at worktree path
 
 # Run AI tool (if testing adapters)
-./bin/gtr config set gtr.ai.default claude
-./bin/gtr ai test-feature
+./bin/gwr config set gwr.ai.default claude
+./bin/gwr ai test-feature
 # Expected: Starts Claude Code in worktree directory
 
 # Remove worktree by branch name
-./bin/gtr rm test-feature
+./bin/gwr rm test-feature
 # Expected: Removes worktree folder
 
 # List worktrees
-./bin/gtr list
+./bin/gwr list
 # Expected: Table format with branches and paths
-./bin/gtr list --porcelain
+./bin/gwr list --porcelain
 # Expected: Machine-readable tab-separated output
 
 # Test configuration commands
-./bin/gtr config set gtr.editor.default cursor
-./bin/gtr config get gtr.editor.default
+./bin/gwr config set gwr.editor.default cursor
+./bin/gwr config get gwr.editor.default
 # Expected: Returns "cursor"
-./bin/gtr config set gtr.editor.default vscode --global
-./bin/gtr config unset gtr.editor.default
+./bin/gwr config set gwr.editor.default vscode --global
+./bin/gwr config unset gwr.editor.default
 
 # Test shell completions with tab completion
-git gtr new <TAB>
-git gtr editor <TAB>
+gwr new <TAB>
+gwr editor <TAB>
 # Expected: Shows available branches/worktrees
 
-# Test git gtr go for main repo and worktrees
-cd "$(./bin/gtr go 1)"
+# Test gwr go for main repo and worktrees
+cd "$(./bin/gwr go 1)"
 # Expected: Navigates to repo root
-cd "$(./bin/gtr go test-feature)"
+cd "$(./bin/gwr go test-feature)"
 # Expected: Navigates to worktree
 
 # Test copy patterns with include/exclude
-git config --add gtr.copy.include "**/.env.example"
-git config --add gtr.copy.exclude "**/.env"
-./bin/gtr new test-copy
+git config --add gwr.copy.include "**/.env.example"
+git config --add gwr.copy.exclude "**/.env"
+./bin/gwr new test-copy
 # Expected: Copies .env.example but not .env
 
 # Test post-create and post-remove hooks
-git config --add gtr.hook.postCreate "echo 'Created!' > /tmp/gtr-test"
-./bin/gtr new test-hooks
-# Expected: Creates /tmp/gtr-test file
-git config --add gtr.hook.postRemove "echo 'Removed!' > /tmp/gtr-removed"
-./bin/gtr rm test-hooks
-# Expected: Creates /tmp/gtr-removed file
+git config --add gwr.hook.postCreate "echo 'Created!' > /tmp/gwr-test"
+./bin/gwr new test-hooks
+# Expected: Creates /tmp/gwr-test file
+git config --add gwr.hook.postRemove "echo 'Removed!' > /tmp/gwr-removed"
+./bin/gwr rm test-hooks
+# Expected: Creates /tmp/gwr-removed file
 ```
 
 ### Debugging Bash Scripts
@@ -134,7 +121,7 @@ When debugging issues:
 
 ```bash
 # Enable tracing to see each command executed
-bash -x ./bin/gtr <command>
+bash -x ./bin/gwr <command>
 
 # Or add 'set -x' temporarily to specific functions
 # In lib/core.sh or other files:
@@ -155,18 +142,18 @@ echo "Debug: var=$var" >&2
 # Verify git is available
 git --version
 
-# Check git gtr setup
-./bin/gtr doctor
+# Check gwr setup
+./bin/gwr doctor
 
 # List available adapters
-./bin/gtr adapter
+./bin/gwr adapter
 ```
 
 ## Architecture
 
 ### Module Structure
 
-- **`bin/gtr`**: Main executable and command dispatcher. Sources all lib files and routes commands to appropriate handlers.
+- **`bin/gwr`**: Main executable and command dispatcher. Sources all lib files and routes commands to appropriate handlers.
 - **`lib/core.sh`**: Git worktree operations (create, remove, list). Contains core business logic for worktree management.
 - **`lib/config.sh`**: Configuration management via `git config` wrapper functions. Supports local/global/system scopes.
 - **`lib/platform.sh`**: OS-specific utilities for macOS/Linux/Windows.
@@ -184,7 +171,7 @@ git --version
 
 **Branch Name Mapping**: Branch names are sanitized to valid folder names (slashes and special chars → hyphens). For example, `feature/user-auth` becomes folder `feature-user-auth`.
 
-**Special ID '1'**: The main repository is always accessible via ID `1` in commands (e.g., `git gtr go 1`, `git gtr editor 1`).
+**Special ID '1'**: The main repository is always accessible via ID `1` in commands (e.g., `gwr go 1`, `gwr editor 1`).
 
 **Configuration Storage**: All configuration is stored via `git config` (local, global, or system). No custom config files. This makes settings portable and follows git conventions.
 
@@ -195,26 +182,19 @@ git --version
 - Return code 0 indicates success/availability; non-zero indicates failure
 - See "Adapter Contract" in Important Implementation Details for full specifications
 
-**Generic Adapter Fallback**: In addition to specific adapter files, gtr supports generic adapters via environment variables:
-
-- `GTR_EDITOR_CMD`: Custom editor command (e.g., `GTR_EDITOR_CMD="emacs"`)
-- `GTR_AI_CMD`: Custom AI tool command (e.g., `GTR_AI_CMD="copilot"`)
-
-These generic functions in `bin/gtr:34-55` provide a fallback when no specific adapter file exists. This allows users to configure custom tools without creating adapter files. The generic adapter functions check if the command exists using `command -v` and execute it using `eval` to handle multi-word commands properly (e.g., `code --wait`, `bunx @github/copilot@latest`).
-
 ### Command Flow
 
 Understanding how commands are dispatched through the system:
 
-1. **Entry Point** (`bin/gtr:32-79`): Main dispatcher receives command and routes to appropriate handler
-2. **Command Handlers** (`bin/gtr`): Each `cmd_*` function handles a specific command (e.g., `cmd_create`, `cmd_editor`, `cmd_ai`)
+1. **Entry Point** (`bin/gwr:32-79`): Main dispatcher receives command and routes to appropriate handler
+2. **Command Handlers** (`bin/gwr`): Each `cmd_*` function handles a specific command (e.g., `cmd_create`, `cmd_editor`, `cmd_ai`)
 3. **Library Functions** (`lib/*.sh`): Command handlers call reusable functions from library modules
 4. **Adapters** (`adapters/*`): Dynamically loaded when needed via `load_editor_adapter` or `load_ai_adapter`
 
-**Example flow for `git gtr new my-feature`:**
+**Example flow for `gwr new my-feature`:**
 
-```
-bin/gtr main()
+```bash
+bin/gwr main()
   → cmd_create()
   → resolve_base_dir() [lib/core.sh]
   → create_worktree() [lib/core.sh]
@@ -222,10 +202,10 @@ bin/gtr main()
   → run_hooks_in() [lib/hooks.sh]
 ```
 
-**Example flow for `git gtr editor my-feature`:**
+**Example flow for `gwr editor my-feature`:**
 
-```
-bin/gtr main()
+```bash
+bin/gwr main()
   → cmd_editor()
   → resolve_target() [lib/core.sh]
   → load_editor_adapter()
@@ -247,14 +227,14 @@ When making changes, follow these core principles (from CONTRIBUTING.md):
 
 ### Updating the Version Number
 
-When releasing a new version, update the version constant in `bin/gtr` (the main script, not the `bin/git-gtr` wrapper):
+When releasing a new version, update the version constant in `bin/gwr`:
 
 ```bash
-# bin/gtr line 8
-GTR_VERSION="2.0.0"  # Update this
+# bin/gwr line 8
+GWR_VERSION="1.0.0"  # Update this
 ```
 
-The version is displayed with `git gtr version` and `git gtr --version`.
+The version is displayed with `gwr version` and `gwr --version`.
 
 ### Adding a New Editor Adapter
 
@@ -284,7 +264,7 @@ Also update:
 
 - README.md with installation/setup instructions
 - Completions in `completions/` to include the new editor name (all three: bash, zsh, fish)
-- The help text in `bin/gtr` - search for "Available editors:" in the `cmd_help` function and `load_editor_adapter` function
+- The help text in `bin/gwr` - search for "Available editors:" in the `cmd_help` function and `load_editor_adapter` function
 
 ### Adding a New AI Tool Adapter
 
@@ -315,7 +295,7 @@ Also update:
 
 - README.md with installation instructions and use cases
 - Completions to include the new AI tool name (all three: bash, zsh, fish)
-- The help text in `bin/gtr` - search for "Available AI tools:" in the `cmd_help` function and `load_ai_adapter` function
+- The help text in `bin/gwr` - search for "Available AI tools:" in the `cmd_help` function and `load_ai_adapter` function
 
 ### Modifying Core Functionality
 
@@ -333,9 +313,9 @@ When changing `lib/*.sh` files:
 
 When adding new commands or flags, update all three completion files:
 
-- `completions/gtr.bash` (Bash)
-- `completions/_git-gtr` (Zsh)
-- `completions/gtr.fish` (Fish)
+- `completions/gwr.bash` (Bash)
+- `completions/_gwr` (Zsh)
+- `completions/gwr.fish` (Fish)
 
 ### Git Version Compatibility
 
@@ -358,34 +338,17 @@ When using Git commands, check if fallbacks exist (e.g., in `lib/core.sh:97-100`
 
 ## Configuration Reference
 
-All config keys use `gtr.*` prefix and are managed via `git config`:
+All config keys use `gwr.*` prefix and are managed via `git config`:
 
-- `gtr.worktrees.dir`: Base directory for worktrees (default: `<repo-name>-worktrees`)
-- `gtr.worktrees.prefix`: Folder prefix for worktrees (default: `""`)
-- `gtr.defaultBranch`: Default branch name (default: auto-detect)
-- `gtr.editor.default`: Default editor (cursor, vscode, zed, etc.)
-- `gtr.ai.default`: Default AI tool (aider, claude, codex, etc.)
-- `gtr.copy.include`: Multi-valued glob patterns for files to copy
-- `gtr.copy.exclude`: Multi-valued glob patterns for files to exclude
-- `gtr.hook.postCreate`: Multi-valued commands to run after creating worktree
-- `gtr.hook.postRemove`: Multi-valued commands to run after removing worktree
-
-## Environment Variables
-
-**System environment variables**:
-
-- `GTR_DIR`: Override script directory location (default: auto-detected via symlink resolution in `bin/gtr:11-21`)
-- `GTR_WORKTREES_DIR`: Override base worktrees directory (fallback if `gtr.worktrees.dir` not set)
-- `GTR_EDITOR_CMD`: Generic editor command for custom editors without adapter files
-- `GTR_EDITOR_CMD_NAME`: First word of `GTR_EDITOR_CMD` used for availability checks
-- `GTR_AI_CMD`: Generic AI tool command for custom tools without adapter files
-- `GTR_AI_CMD_NAME`: First word of `GTR_AI_CMD` used for availability checks
-
-**Hook environment variables** (available in `gtr.hook.postCreate` and `gtr.hook.postRemove` scripts):
-
-- `REPO_ROOT`: Repository root path
-- `WORKTREE_PATH`: New worktree path
-- `BRANCH`: Branch name
+- `gwr.worktrees.dir`: Base directory for worktrees (default: `<repo-name>-worktrees`)
+- `gwr.worktrees.prefix`: Folder prefix for worktrees (default: `""`)
+- `gwr.defaultBranch`: Default branch name (default: auto-detect)
+- `gwr.editor.default`: Default editor (cursor, vscode, zed, etc.)
+- `gwr.ai.default`: Default AI tool (aider, claude, codex, etc.)
+- `gwr.copy.include`: Multi-valued glob patterns for files to copy
+- `gwr.copy.exclude`: Multi-valued glob patterns for files to exclude
+- `gwr.hook.postCreate`: Multi-valued commands to run after creating worktree
+- `gwr.hook.postRemove`: Multi-valued commands to run after removing worktree
 
 ## Important Implementation Details
 
@@ -403,9 +366,9 @@ All config keys use `gtr.*` prefix and are managed via `git config`:
 
 **Configuration Precedence**: The `cfg_default` function in `lib/config.sh:128-146` checks git config first (local > global > system), then environment variables, then fallback values. Use `cfg_get_all` (lib/config.sh:28-51) for multi-valued configs.
 
-**Multi-Value Configuration Pattern**: Some configs support multiple values (`gtr.copy.include`, `gtr.copy.exclude`, `gtr.hook.postCreate`, `gtr.hook.postRemove`). The `cfg_get_all` function merges values from local + global + system and deduplicates. Set with: `git config --add gtr.copy.include "pattern"`.
+**Multi-Value Configuration Pattern**: Some configs support multiple values (`gwr.copy.include`, `gwr.copy.exclude`, `gwr.hook.postCreate`, `gwr.hook.postRemove`). The `cfg_get_all` function merges values from local + global + system and deduplicates. Set with: `git config --add gwr.copy.include "pattern"`.
 
-**Adapter Loading**: Adapters are sourced dynamically when needed (see `load_editor_adapter` at bin/gtr:794-806 and `load_ai_adapter` at bin/gtr:808-820). They must exist in `adapters/editor/` or `adapters/ai/` and define the required functions.
+**Adapter Loading**: Adapters are sourced dynamically when needed (see `load_editor_adapter` at bin/gwr:794-806 and `load_ai_adapter` at bin/gwr:808-820). They must exist in `adapters/editor/` or `adapters/ai/` and define the required functions.
 
 **Adapter Contract**:
 
@@ -418,8 +381,8 @@ All config keys use `gtr.*` prefix and are managed via `git config`:
 ### Permission Denied Errors
 
 ```bash
-# If you get "Permission denied" when running ./bin/gtr
-chmod +x ./bin/gtr
+# If you get "Permission denied" when running ./bin/gwr
+chmod +x ./bin/gwr
 ```
 
 ### Symlink Issues
@@ -431,14 +394,8 @@ ls -la /usr/local/bin
 # Create it if needed (macOS/Linux)
 sudo mkdir -p /usr/local/bin
 
-# Verify symlink (v2.0.0+: symlink to git-gtr, not gtr)
-ls -la /usr/local/bin/git-gtr
-
-# Create symlink for v2.0.0+
-sudo ln -s "$(pwd)/bin/git-gtr" /usr/local/bin/git-gtr
-
-# Verify it works
-git gtr version
+# Verify symlink
+ls -la /usr/local/bin/gwr
 ```
 
 ### Adapter Not Found
@@ -449,14 +406,14 @@ ls -la adapters/editor/
 ls -la adapters/ai/
 
 # Verify adapter is being sourced correctly
-bash -x ./bin/gtr adapter  # Shows which files are being loaded
+bash -x ./bin/gwr adapter  # Shows which files are being loaded
 
 # Test specific adapter function availability
 bash -c 'source adapters/editor/cursor.sh && editor_can_open && echo "Available" || echo "Not found"'
 bash -c 'source adapters/ai/claude.sh && ai_can_start && echo "Available" || echo "Not found"'
 
 # Debug adapter loading with trace
-bash -x ./bin/gtr editor test-feature --editor cursor
+bash -x ./bin/gwr editor test-feature --editor cursor
 # Shows full execution trace including adapter loading
 ```
 
@@ -464,11 +421,11 @@ bash -x ./bin/gtr editor test-feature --editor cursor
 
 ```bash
 # When testing, use a separate test repo to avoid breaking your work
-mkdir -p ~/gtr-test-repo
-cd ~/gtr-test-repo
+mkdir -p ~/gwr-test-repo
+cd ~/gwr-test-repo
 git init
 git commit --allow-empty -m "Initial commit"
 
-# Now test git gtr commands
-/path/to/git-worktree-runner/bin/gtr new test-feature
+# Now test gwr commands
+/path/to/git-worktree-runner/bin/gwr new test-feature
 ```

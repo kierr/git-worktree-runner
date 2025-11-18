@@ -20,7 +20,7 @@ applyTo: **/*.bash, **/*.fish, **/*.sh
 
 ### Strict Mode & Safety
 
-- Global `set -e` in `bin/gtr`: guard non-critical commands with `|| true`.
+- Global `set -e` in `bin/gwr`: guard non-critical commands with `|| true`.
 - Prefer `[ ]` over `[[ ]]` for POSIX portability (use `[[` only when needed).
 - Always quote glob inputs; disable unintended globbing (`set -f` temporarily if required).
 
@@ -31,7 +31,7 @@ applyTo: **/*.bash, **/*.fish, **/*.sh
 
 ### Debugging
 
-- Quick trace: `bash -x ./bin/gtr <cmd>`.
+- Quick trace: `bash -x ./bin/gwr <cmd>`.
 - Inline: wrap suspicious block with `set -x` / `set +x`.
 - Function presence: `declare -f create_worktree` or `declare -f resolve_target`.
 - Variable inspection: `echo "DEBUG var=$var" >&2` (stderr keeps stdout clean for command substitution).

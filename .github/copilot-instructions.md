@@ -2,7 +2,7 @@
 
 ## Architecture & Flow
 
-`bin/gtr` (961 lines) dispatches to `cmd_*` functions (case block lines 36‑77). Libraries sourced at startup:
+`bin/gwr` (961 lines) dispatches to `cmd_*` functions (case block lines 36‑77). Libraries sourced at startup:
 
 - `lib/core.sh` - create/list/remove/resolve worktrees
 - `lib/config.sh` - git config wrapper with precedence
@@ -17,7 +17,7 @@ Adapters in `adapters/{editor,ai}` each implement two functions with strict cont
 
 - Special ID `1` = main repo (usable in `open`, `go`, `ai`).
 - Folder naming = sanitized branch (`feature/auth` → `feature-auth`).
-- Base dir resolution (`resolve_base_dir`): config `gtr.worktrees.dir` → env → default `<repo>-worktrees`; relative paths resolved from repo root; tilde expanded; warns if inside repo unignored.
+- Base dir resolution (`resolve_base_dir`): config `gwr.worktrees.dir` → env → default `<repo>-worktrees`; relative paths resolved from repo root; tilde expanded; warns if inside repo unignored.
 - Target resolution (`resolve_target`): ID `1` → current → sanitized path → scan directories; returns TSV: `is_main\tpath\tbranch`.
 - Config precedence (`cfg_default`): git config (local→global→system) → env → fallback. Multi-value keys merged & deduped (`cfg_get_all`).
 
@@ -28,20 +28,20 @@ Editor: `editor_can_open`, `editor_open <path>`; AI: `ai_can_start`, `ai_start <
 ## Manual Testing (Essential Subset)
 
 ```bash
-./bin/gtr new feature/x      # creates folder feature-x
-./bin/gtr open feature/x     # loads configured editor
-./bin/gtr ai feature/x       # starts configured AI tool
-./bin/gtr list               # lists main + worktrees
-./bin/gtr rm feature/x       # removes worktree
-./bin/gtr go feature/x       # prints path (use in cd)
+./bin/gwr new feature/x      # creates folder feature-x
+./bin/gwr open feature/x     # loads configured editor
+./bin/gwr ai feature/x       # starts configured AI tool
+./bin/gwr list               # lists main + worktrees
+./bin/gwr rm feature/x       # removes worktree
+./bin/gwr go feature/x       # prints path (use in cd)
 ```
 
-Advanced: `--force --name backend` (same branch multi-worktree); `git config --add gtr.copy.include "**/.env.example"`; hooks: `git config --add gtr.hook.postCreate "npm install"`.
+Advanced: `--force --name backend` (same branch multi-worktree); `git config --add gwr.copy.include "**/.env.example"`; hooks: `git config --add gwr.hook.postCreate "npm install"`.
 Full matrix: see `.github/instructions/testing.instructions.md`.
 
 ## Common Changes
 
-**Add command**: new `cmd_<name>()` function in `bin/gtr` + case entry (lines 36‑77) + help text in `cmd_help` + all three completions (bash/zsh/fish) + README docs.
+**Add command**: new `cmd_<name>()` function in `bin/gwr` + case entry (lines 36‑77) + help text in `cmd_help` + all three completions (bash/zsh/fish) + README docs.
 
 **Add adapter**: two functions (see contract below), `log_error` with install instructions, quote all paths, check `command -v`. Update: README, help text (`cmd_help`), completions (all three).
 
@@ -56,21 +56,21 @@ Full matrix: see `.github/instructions/testing.instructions.md`.
 
 ## Debugging
 
-Trace: `bash -x ./bin/gtr new test`; scoped: `set -x` / `set +x`; list function: `declare -f resolve_target`; inspect var: `echo "DEBUG=$var" >&2`; adapter sourcing: `bash -c 'source adapters/ai/claude.sh && ai_can_start && echo OK'`.
+Trace: `bash -x ./bin/gwr new test`; scoped: `set -x` / `set +x`; list function: `declare -f resolve_target`; inspect var: `echo "DEBUG=$var" >&2`; adapter sourcing: `bash -c 'source adapters/ai/claude.sh && ai_can_start && echo OK'`.
 
 ## Troubleshooting Quick
 
-Permission: `chmod +x bin/gtr`. Missing adapter: `gtr adapter`. Install check: `./bin/gtr doctor`. Config issues: `git config --list | grep gtr`. Worktree confusion: inspect `resolve_target` logic & naming. Symlink problems: ensure `/usr/local/bin` exists then `ln -s "$(pwd)/bin/gtr" /usr/local/bin/gtr`.
+Permission: `chmod +x bin/gwr`. Missing adapter: `gwr adapter`. Install check: `./bin/gwr doctor`. Config issues: `git config --list | grep gwr`. Worktree confusion: inspect `resolve_target` logic & naming. Symlink problems: ensure `/usr/local/bin` exists then `ln -s "$(pwd)/bin/gwr" /usr/local/bin/gwr`.
 
 ## Version
 
-Update `GTR_VERSION` (line 8 `bin/gtr`) when releasing; affects `gtr version` / `--version`.
+Update `GWR_VERSION` (line 8 `bin/gwr`) when releasing; affects `gwr version` / `--version`.
 
 ## Documentation Structure
 
 - **`.github/copilot-instructions.md`** (this file) - High-level guide for AI agents
 - **`.github/instructions/*.instructions.md`** - Specific guidance by file pattern:
-  - `testing.instructions.md` - Manual testing checklist (applies to: `bin/gtr`, `lib/**/*.sh`, `adapters/**/*.sh`)
+  - `testing.instructions.md` - Manual testing checklist (applies to: `bin/gwr`, `lib/**/*.sh`, `adapters/**/*.sh`)
   - `sh.instructions.md` - Shell scripting conventions (applies to: `**/*.sh`, `**/*.bash`, `**/*.fish`)
   - `lib.instructions.md` - Core library modification guidelines (applies to: `lib/**/*.sh`)
   - `editor.instructions.md` - Editor adapter contract (applies to: `adapters/editor/**/*.sh`)
