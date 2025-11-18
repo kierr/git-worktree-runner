@@ -30,8 +30,8 @@ complete -c gwr -n "__fish_seen_subcommand_from rm" -l force -d "Force removal e
 complete -c gwr -n "__fish_seen_subcommand_from rm" -l yes -d "Non-interactive mode"
 
 # Config command
-complete -c gwr -n "__fish_seen_subcommand_from config" -f -a "get set unset"
-complete -c gwr -n "__fish_seen_subcommand_from config; and __fish_seen_subcommand_from get set unset" -f -a "\
+complete -c gwr -n "__fish_seen_subcommand_from config" -f -a "get set unset add"
+complete -c gwr -n "__fish_seen_subcommand_from config; and __fish_seen_subcommand_from get set unset add" -f -a "\
   gwr.worktrees.dir\t'Worktrees base directory'
   gwr.worktrees.prefix\t'Worktree folder prefix'
   gwr.defaultBranch\t'Default branch'
