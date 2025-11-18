@@ -71,7 +71,7 @@ EOF
 		fi
 
 		# Skip if excluded
-		[ "$excluded" -eq 1 ] && return 1
+		[ "$excluded" -eq 1 ] && { echo "$current_count"; return 1; }
 
 		# Determine destination path
 		local dest_file
