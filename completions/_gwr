@@ -1,17 +1,7 @@
-<<<<<<<< HEAD:completions/_gwr
 #compdef gwr
 # Zsh completion for gwr
 
 _gwr() {
-========
-#compdef git-gtr
-# Zsh completion for git gtr
-
-_git_gtr() {
-  # Note: When called via 'git gtr', the words array is [git-gtr, <command>, ...]
-  # Git's completion system invokes this function automatically
-
->>>>>>>> origin/main:completions/_git-gtr
   local -a commands
   commands=(
     'new:Create a new worktree'
@@ -30,12 +20,12 @@ _git_gtr() {
   )
 
   local -a branches all_options
-  # Get branch names
-  branches=(${(f)"$(git branch --format='%(refname:short)' 2>/dev/null)"})
+  # Get branch names from existing worktrees using gwr list --porcelain
+  branches=(${(f)"$(gwr list --porcelain 2>/dev/null | cut -f2 | grep -v '^$' | sort -u)"})
   # Add special ID '1' for main repo
   all_options=("1" "${branches[@]}")
 
-  # Complete the gtr subcommand (new, go, editor, etc.)
+  # Complete the gwr subcommand (new, go, editor, etc.)
   if (( CURRENT == 2 )); then
     _describe 'commands' commands
   # Complete arguments to the subcommand
@@ -87,8 +77,4 @@ _git_gtr() {
   fi
 }
 
-<<<<<<<< HEAD:completions/_gwr
 _gwr "$@"
-========
-# Function is auto-discovered by git's completion system - do not call it here
->>>>>>>> origin/main:completions/_git-gtr

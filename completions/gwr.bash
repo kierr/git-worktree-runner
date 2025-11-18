@@ -17,9 +17,9 @@ _gwr_completion() {
 	case "$cmd" in
 	go | editor | ai | rm)
 		if [ "$cword" -eq 2 ]; then
-			# Complete with branch names and special ID '1' for main repo
+			# Complete with branch names from existing worktrees
 			local branches all_options
-			branches=$(git branch --format='%(refname:short)' 2>/dev/null || true)
+			branches=$(gwr list --porcelain 2>/dev/null | cut -f2 | grep -v '^$' | sort -u || true)
 			all_options="1 $branches"
 			COMPREPLY=($(compgen -W "$all_options" -- "$cur"))
 		elif [[ $cur == -* ]]; then

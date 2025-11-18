@@ -47,8 +47,8 @@ complete -c gwr -n "__fish_seen_subcommand_from config; and __fish_seen_subcomma
 function __gwr_worktree_branches
   # Special ID for main repo
   echo "1"
-  # Get branch names
-  git branch --format='%(refname:short)' 2>/dev/null
+  # Get branch names from existing worktrees using gwr list --porcelain
+  gwr list --porcelain 2>/dev/null | cut -f2 | grep -v '^$' | sort -u
 end
 
 # Complete branch names for commands that need them
