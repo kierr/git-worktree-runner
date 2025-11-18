@@ -16,7 +16,7 @@ resolve_script_dir() {
 		src="$(readlink "$src")"
 		[[ $src != /* ]] && src="$dir/$src"
 	done
-	cd -P "$(dirname "$src")/.." && pwd
+	(cd -P "$(dirname "$src")/.." && pwd)
 }
 : "${GWR_DIR:=$(resolve_script_dir)}"
 
